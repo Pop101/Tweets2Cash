@@ -1,5 +1,5 @@
 # Tweet2Cash
- Buy and sell stocks based on tweets using lemon.markets
+ Buy and sell stocks on the Lang & Schwarz exchange based on tweets using (http://lemon.markets)
 
 ## Table of contents
 * [General info](#general-info)
@@ -8,19 +8,19 @@
 * [Config](#config)
 
 ## General info
-Trade stocks based on the sentiments of people's tweets! Currently, Lemon offeres $10k in "Trial Money," so I encourage everyone to test out this script. <br>
+Trade stocks based on the sentiments of people's tweets! Currently, Lemon offeres $10k in "Trial Money," so I encourage everyone to test out this script. <br><br>
 This is incredibly unreliable and not recommended if you're actually looking to make money. [Send me an email](mailto:contact@leibmann.org) or fork the project if you find better configuration options
 	
 ## Technologies
-Project is created with:
+This project is created with:
 * [Tweepy](https://pypi.org/project/tweepy/): 3.9
 * [NLTK](https://www.nltk.org/): 3.5
-* [My implementation](https://github.com/Pop101/Lemon) of [Lemon.markets](lemon.markets)' api
+* [My implementation](https://github.com/Pop101/Lemon) of [Lemon.markets](http://lemon.markets)' api
 	
 ## Setup
 To run this project, simply download it and install the requirements with `pip3 install -r requirements.txt`. <br>
 Then, specify your api-keys for both lemon.markets and twitter in `./config.yml` <br>
-Now, just run it with python3! <br>
+Now, just run it with python3: `python3 main.py`! <br><br>
 <b>Running in a screen or as a backround process is recommended</b>
 
 ## Config
