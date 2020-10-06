@@ -76,9 +76,13 @@ def bull(account:Account, tradeable):
     quantity = int(config['limit']/tradeable.get_cost())
     if quantity <= 0: return # can't trade fractions kid
 
-    time_to_close = (Lemon.next_market_closing()-datetime.datetime.now()).total_seconds()
+    time_to_close = (Lemon.next_market_closing()-datetime.now().astimezone()).total_seconds()
     if time_to_close < config['limit-time']: return # don't go for profit 1 hr before close
 
+    time_to_open = (Lemon.next_market_availability()-datetime.now().astimezone()).total_seconds()
+    if time_to_open > config['limit-time']: return # don't try more than 1 hour before market start
+
+    # buy
     account.create_buy_order(tradeable, quantity=quantity)
     
     def sell_later():
@@ -95,9 +99,13 @@ def bear(account:Account, tradeable):
     quantity = int(config['limit']/tradeable.get_cost())
     if quantity <= 0: return # can't trade fractions kid
 
-    time_to_close = (Lemon.next_market_closing()-datetime.datetime.now()).total_seconds()
+    time_to_close = (Lemon.next_market_closing()-datetime.now().astimezone()).total_seconds()
     if time_to_close < config['limit-time']: return # don't go for profit 1 hr before close
 
+    time_to_open = (Lemon.next_market_availability()-datetime.now().astimezone()).total_seconds()
+    if time_to_open > config['limit-time']: return # don't try more than 1 hour before market start
+
+    # sell
     sell_quantity = quantity if not config['nuke'] else int(HeldTradeable(tradeable.isin, account).get_amount())
     account.create_sell_order(tradeable, quantity=sell_quantity)
     
