@@ -1,5 +1,5 @@
 # Tweet2Cash
- Buy and sell stocks on the Lang & Schwarz exchange based on tweets using (http://lemon.markets)
+ Buy and sell stocks on the Lang & Schwarz exchange based on tweets using [lemon.markets](http://lemon.markets)
 
 ## Table of contents
 * [General info](#general-info)
@@ -8,7 +8,7 @@
 * [Config](#config)
 
 ## General info
-Trade stocks based on the sentiments of people's tweets! Currently, Lemon offeres $10k in "Trial Money," so I encourage everyone to test out this script. <br><br>
+Trade stocks based on the sentiments of people's tweets! Inspired by [trump2cash](https://github.com/maxbbraun/trump2cash) bot, but using the German stock exchange and aiming towards more customization. Currently, Lemon offeres $10k in "Trial Money," so I encourage everyone to test out this script. <br><br>
 This is incredibly unreliable and not recommended if you're actually looking to make money. [Send me an email](mailto:contact@leibmann.org) or fork the project if you find better configuration options
 	
 ## Technologies
