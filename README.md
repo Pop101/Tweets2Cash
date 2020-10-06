@@ -8,8 +8,7 @@
 * [Config](#config)
 
 ## General info
-Trade stocks based on the sentiments of people's tweets!
-Currently, Lemon offeres $10k in "Trial Money," so I encourage everyone to test out this script
+Trade stocks based on the sentiments of people's tweets! Currently, Lemon offeres $10k in "Trial Money," so I encourage everyone to test out this script. <br>
 This is incredibly unreliable and not recommended if you're actually looking to make money. [Send me an email](mailto:contact@leibmann.org) or fork the project if you find better configuration options
 	
 ## Technologies
@@ -19,9 +18,9 @@ Project is created with:
 * [My implementation](https://github.com/Pop101/Lemon) of [Lemon.markets](lemon.markets)' api
 	
 ## Setup
-To run this project, simply download it and install the requirements with `pip3 install -r requirements.txt`.
-Then, specify your api-keys for both lemon.markets and twitter in `./config.yml`
-Now, just run it with python3!
+To run this project, simply download it and install the requirements with `pip3 install -r requirements.txt`. <br>
+Then, specify your api-keys for both lemon.markets and twitter in `./config.yml` <br>
+Now, just run it with python3! <br>
 <b>Running in a screen or as a backround process is recommended</b>
 
 ## Config
