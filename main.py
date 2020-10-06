@@ -1,7 +1,7 @@
 # Try to download and import lemon.
 import dl_lemon
 try: from lemon import Lemon, Account, HeldTradeable
-except ImportError: raise ImportError('Could not find or download lemon.py! Please download it from https://github.com/Pop101/Lemon/blob/master/lemon.py manually.')
+except ImportError: raise Exception('Could not find or download lemon.py! Please download it from https://github.com/Pop101/Lemon/blob/master/lemon.py manually.')
 
 # Regular Imports
 from twitter import Twitter
@@ -49,8 +49,11 @@ def on_tweet_recieved(account:Account, tweet):
     stocks = TextToTradeables.process_text(txt, similarity_cutoff=config['match'], min_noun_length=4)
 
     # search twitter cashtags ($STOCK)
-    cashtags = [(TextToTradeables.deep_search(Twitter.cashtag_to_stock(q)), 0) for q in Twitter.get_tweet_cashtags(tweet)]
-    print('i:{0}, o:{1}'.format(Twitter.get_tweet_cashtags(tweet), [q[0].name for q in cashtags]))
+    cashtags = [(TextToTradeables.deep_search(Twitter.cashtag_to_stock(q))[0], 0) for q in Twitter.get_tweet_cashtags(tweet)]
+    stocks.extend(cashtags)
+    
+    if len(cashtags) > 0 and config['verbose']:
+        print('i:{0}, o:{1}'.format(Twitter.get_tweet_cashtags(tweet), [q[0].name for q in cashtags]))
     
     if len(stocks) <= 0 or sent == 0: return
 
@@ -82,7 +85,7 @@ def bull(account:Account, tradeable):
     if time_to_close < config['limit-time']: return (False, 'Too close to closing time!') # don't go for profit 1 hr before close
 
     time_to_open = (Lemon.next_market_availability()-datetime.now().astimezone()).total_seconds()
-    if time_to_open > config['limit-time']: return (False, 'Too far from openign time.') # don't try more than 1 hour before market start
+    if time_to_open > config['limit-time']: return (False, 'Too far from opening time.') # don't try more than 1 hour before market start
 
     # buy
     account.create_buy_order(tradeable, quantity=quantity)
@@ -106,7 +109,7 @@ def bear(account:Account, tradeable):
     if time_to_close < config['limit-time']: return (False, 'Too close to closing time!') # don't go for profit 1 hr before close
 
     time_to_open = (Lemon.next_market_availability()-datetime.now().astimezone()).total_seconds()
-    if time_to_open > config['limit-time']: return (False, 'Too far from openign time.') # don't try more than 1 hour before market start
+    if time_to_open > config['limit-time']: return (False, 'Too far from opening time.') # don't try more than 1 hour before market start
 
     # sell
     sell_quantity = quantity if not config['nuke'] else int(HeldTradeable(tradeable.isin, account).get_amount())
