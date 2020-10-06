@@ -14,7 +14,7 @@ try: from yaml import CLoader as Loader
 except ImportError: from yaml import Loader
 
 
-KEY_FILE = './config-actual.yml'
+KEY_FILE = './config.yml'
 
 # Load all the keys and config options we need
 def load_config(path='./config.yml'):

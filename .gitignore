@@ -1,2 +1,3 @@
 config-actual.yml
 lemon.py
+*.pyc
