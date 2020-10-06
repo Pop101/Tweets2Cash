@@ -56,15 +56,17 @@ def on_tweet_recieved(account:Account, tweet):
 
     if config['verbose']:
         to_print = '"{0}":\n'.format(txt)
-        to_print += '\t{0} these stocks with a sentiment of {1}:\n'.format('Buy' if sent > 0 else 'Sell', sent)
+        to_print += '\t{0} these stocks with a sentiment of {1}:\n'.format('Buying' if sent > 0 else 'Selling', sent)
         for stock in stocks:
             to_print += '\t\t{0} at ${1} (sim: {2}, w_sim: {3})\n'.format(stock[0].name, stock[0].get_cost(), stock[1], stock[1]*len(stock[0].name))
         print(to_print)
     
     # trade the stocks based on sentiment
     for stock in stocks:
-        if sent > 0: bull(account, stock[0])
-        if sent < 0: bear(account, stock[0])
+        if sent > 0: result, code = bull(account, stock[0])
+        if sent < 0: result, code = bear(account, stock[0])
+        if not result and config['verbose']:
+            print('Error handling stock {0}: "{1}"'.format(stock[0].name, code)) 
 
 # we must keep a list of scheduled trades in case of program stop 
 scheduled_trades = list()
@@ -74,13 +76,13 @@ def bull(account:Account, tradeable):
     Buy now, sell at close
     """
     quantity = int(config['limit']/tradeable.get_cost())
-    if quantity <= 0: return # can't trade fractions kid
+    if quantity <= 0: return (False, 'Not enough money') # can't trade fractions kid
 
     time_to_close = (Lemon.next_market_closing()-datetime.now().astimezone()).total_seconds()
-    if time_to_close < config['limit-time']: return # don't go for profit 1 hr before close
+    if time_to_close < config['limit-time']: return (False, 'Too close to closing time!') # don't go for profit 1 hr before close
 
     time_to_open = (Lemon.next_market_availability()-datetime.now().astimezone()).total_seconds()
-    if time_to_open > config['limit-time']: return # don't try more than 1 hour before market start
+    if time_to_open > config['limit-time']: return (False, 'Too far from openign time.') # don't try more than 1 hour before market start
 
     # buy
     account.create_buy_order(tradeable, quantity=quantity)
@@ -91,19 +93,20 @@ def bull(account:Account, tradeable):
     
     timer = StoppableTimer(time_to_close-config['limit-time'], sell_later)
     scheduled_trades.append(timer)
+    return (True, 'Executing bullish strategy')
 
 def bear(account:Account, tradeable):
     """
     Sell now (if any are held), buy at close
     """
     quantity = int(config['limit']/tradeable.get_cost())
-    if quantity <= 0: return # can't trade fractions kid
+    if quantity <= 0: return (False, 'Can\'t sell as you don\'t hold any') # can't trade fractions kid
 
     time_to_close = (Lemon.next_market_closing()-datetime.now().astimezone()).total_seconds()
-    if time_to_close < config['limit-time']: return # don't go for profit 1 hr before close
+    if time_to_close < config['limit-time']: return (False, 'Too close to closing time!') # don't go for profit 1 hr before close
 
     time_to_open = (Lemon.next_market_availability()-datetime.now().astimezone()).total_seconds()
-    if time_to_open > config['limit-time']: return # don't try more than 1 hour before market start
+    if time_to_open > config['limit-time']: return (False, 'Too far from openign time.') # don't try more than 1 hour before market start
 
     # sell
     sell_quantity = quantity if not config['nuke'] else int(HeldTradeable(tradeable.isin, account).get_amount())
@@ -114,6 +117,7 @@ def bear(account:Account, tradeable):
     
     timer = StoppableTimer(time_to_close-config['limit-time'], buy_later)
     scheduled_trades.append(timer)
+    return (True, 'Executing bearish strategy')
 
 if __name__ == '__main__':
     config = load_config(KEY_FILE)
