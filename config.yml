@@ -1,0 +1,45 @@
+# Keys
+twitter:
+  consumer-key: <KEY>
+  consumer-secret: <SECRET>
+  app-token: <TOKEN>
+  app-secret: <SECRET>
+lemon: <KEY>
+lemon-account-name: Demo
+
+#---Config---#
+verbose: true
+
+# how closely company names and tweet text need to match. Anything below 1.4 is fine.
+match-factor: 0.8
+
+# If set to true, the match factor will depend on the length of the stock's name. A value of 4-6 is fine for this
+match-weigthed: false
+
+# the maximum amount of Euros to spend on a single transaction
+transaction-limit: 50
+
+# How many seconds before market close it should release all its "profit orders."
+# Keep it high to avoid losing money to post-market movement
+limit-time: 3600
+
+# If set to true, will sell all of the selected stock instead of a limited number
+sell-all-mode: true
+
+# the user IDS to follow and trust
+user-ids:
+  # "political" figures
+  - 25073877 # trump
+  - 1339835893 # hillary clinton
+  - 409486555 # michelle obama
+  - 813286 # barak obama
+  - 30354991 # kamala harris
+  - 939091 # joe biden
+  # influencial figures
+  - 961445378 # mcaffee
+  - 50393960 # bill gates
+  # news sources
+  - 14677919 # new yorker
+  # stock news
+  - 1089978712685273090 # stock_market_pr
+  - 786038665625555000 # stocktiprobot
