@@ -67,6 +67,15 @@ def on_tweet_recieved(account:Account, tweet):
             to_print += '\t\t{0} at ${1} (sim: {2}, w_sim: {3})\n'.format(stock[0].name, stock[0].get_cost(), stock[1], stock[1]*len(stock[0].name))
         print(to_print)
     
+    # remove like stocks
+    found_tradeables, unique_stocks = list(), list()
+    for stock in stocks: 
+        if stock[0].isin not in found_tradeables:
+            found_tradeables.append(stock[0].isin)
+            unique_stocks.append(stock)
+    stocks = unique_stocks
+    del found_tradeables, unique_stocks
+
     # trade the stocks based on sentiment
     for stock in stocks:
         if sent > 0: result, code = bull(account, stock[0])
@@ -145,9 +154,10 @@ if __name__ == '__main__':
         twtr.open_stream(users=config['users'], is_async=False, restrict=True, verbose=config['verbose'])
     except (OSError, SystemError, KeyboardInterrupt):
         if config['verbose']: print('Attempting to stop gracefully.')
-    finally:
-        # On exit, attempt to execute all queued orders
         twtr.close_stream()
+    finally:
+        print('Stream closed!')
+        # On exit, attempt to execute all queued orders
         for task in scheduled_trades:
             try: task.execute()
             except: task.cancel()
