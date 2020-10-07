@@ -91,11 +91,12 @@ def bull(account:Account, tradeable):
     """
     Buy now, sell at close
     """
-    quantity = int(config['limit']/tradeable.get_cost())
+    try: quantity = int(config['limit']/tradeable.get_cost())
+    except ZeroDivisionError: quantity = 1
     if quantity <= 0: return (False, 'Not enough money') # can't trade fractions kid
 
     time_to_close = (Lemon.next_market_closing()-datetime.now().astimezone()).total_seconds()
-    if time_to_close < config['limit-time']: return (False, 'Too close to closing time!') # don't go for profit 1 hr before close
+    if time_to_close < config['limit-time']: return (False, 'Too close to closing time!'  if time_to_close > 0 else 'Market Closed') # don't go for profit 1 hr before close
 
     time_to_open = (Lemon.next_market_availability()-datetime.now().astimezone()).total_seconds()
     if time_to_open > config['limit-time']: return (False, 'Too far from opening time.') # don't try more than 1 hour before market start
@@ -118,11 +119,12 @@ def bear(account:Account, tradeable):
     """
     Sell now (if any are held), buy at close
     """
-    quantity = int(config['limit']/tradeable.get_cost())
+    try: quantity = int(config['limit']/tradeable.get_cost())
+    except ZeroDivisionError: quantity = 1
     if quantity <= 0: return (False, 'Can\'t sell as you don\'t hold any') # can't trade fractions kid
 
     time_to_close = (Lemon.next_market_closing()-datetime.now().astimezone()).total_seconds()
-    if time_to_close < config['limit-time']: return (False, 'Too close to closing time!') # don't go for profit 1 hr before close
+    if time_to_close < config['limit-time']: return (False, 'Too close to closing time!' if time_to_close > 0 else 'Market Closed') # don't go for profit 1 hr before close
 
     time_to_open = (Lemon.next_market_availability()-datetime.now().astimezone()).total_seconds()
     if time_to_open > config['limit-time']: return (False, 'Too far from opening time.') # don't try more than 1 hour before market start
@@ -150,7 +152,7 @@ if __name__ == '__main__':
     account = Lemon.select_account(config['lemon'], config['account-name'])
     initial_funds = account.get_funds()
     print('Available funds in account "{0}": ${1}'.format(config['account-name'],initial_funds))
-    
+
     # instanciate twitter and set callback
     twtr = Twitter(*config['twitter'])
     twtr.callback = lambda tweet: on_tweet_recieved(account, tweet)
