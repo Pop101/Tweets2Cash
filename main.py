@@ -47,13 +47,16 @@ def on_tweet_recieved(account:Account, tweet):
 
     # search body with nlp
     stocks = TextToTradeables.process_text(txt, similarity_cutoff=config['match'], min_noun_length=4)
+    # re-prune the stock list
+    if config['match']: stocks = list(filter(lambda stock: stock[1] <= config['match'], stocks))
 
     # search twitter cashtags ($STOCK)
-    cashtags = [(TextToTradeables.deep_search(Twitter.cashtag_to_stock(q))[0], 0) for q in Twitter.get_tweet_cashtags(tweet)]
+    cashtags = [(Lemon.search_for_tradeable(Twitter.cashtag_to_stock(q)), 0) for q in Twitter.get_tweet_cashtags(tweet)]
+    cashtags = list(filter(lambda x: x != None, cashtags))
     stocks.extend(cashtags)
-    
-    if len(cashtags) > 0 and config['verbose']:
-        print('i:{0}, o:{1}'.format(Twitter.get_tweet_cashtags(tweet), [q[0].name for q in cashtags]))
+
+    if config['verbose'] and len(cashtags) > 0:
+        print('Cashtag IO: i:{0}, o:{1}'.format(Twitter.get_tweet_cashtags(tweet), [q[0].name for q in cashtags]))
     
     if len(stocks) <= 0 or sent == 0: return
 
