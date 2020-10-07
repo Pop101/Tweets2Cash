@@ -52,7 +52,7 @@ def on_tweet_recieved(account:Account, tweet):
 
     # search twitter cashtags ($STOCK)
     cashtags = [(Lemon.search_for_tradeable(Twitter.cashtag_to_stock(q)), 0) for q in Twitter.get_tweet_cashtags(tweet)]
-    cashtags = list(filter(lambda x: x != None, cashtags))
+    cashtags = list(filter(lambda x: x != None and x[0] != None, cashtags))
     stocks.extend(cashtags)
 
     if config['verbose'] and len(cashtags) > 0:
@@ -95,7 +95,7 @@ def bull(account:Account, tradeable):
     
     def sell_later():
         if config['nuke']: quantity = int(HeldTradeable(tradeable.isin, account).get_amount())
-        account.create_sell_order(tradeable, quantity=quantity)
+        account.create_sell_order(tradeable, quantity=quantity, handle_errors=True)
     
     timer = StoppableTimer(time_to_close-config['limit-time'], sell_later)
     scheduled_trades.append(timer)
@@ -119,7 +119,9 @@ def bear(account:Account, tradeable):
     account.create_sell_order(tradeable, quantity=sell_quantity)
     
     def buy_later():
-        account.create_buy_order(tradeable, quantity=quantity)
+        try: account.create_buy_order(tradeable, quantity=quantity)
+        except ValueError:
+            if config['verbose']: print('Error buying {0} {1} after selling short'.format(tradeable.name, quantity))
     
     timer = StoppableTimer(time_to_close-config['limit-time'], buy_later)
     scheduled_trades.append(timer)
