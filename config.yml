@@ -40,6 +40,8 @@ user-ids:
   - 50393960 # bill gates
   # news sources
   - 14677919 # new yorker
+  - 807095 # ny times
+  - 2467791 # washington post
   # stock news
   - 1089978712685273090 # stock_market_pr
   - 786038665625555000 # stocktiprobot
