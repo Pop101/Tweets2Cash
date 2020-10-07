@@ -7,6 +7,7 @@ except ImportError: raise Exception('Could not find or download lemon.py! Please
 from twitter import Twitter
 from nlp_analysis import TextToTradeables, StoppableTimer
 from datetime import datetime
+from requests.exceptions import HTTPError
 import os
 
 import yaml
@@ -100,11 +101,14 @@ def bull(account:Account, tradeable):
     if time_to_open > config['limit-time']: return (False, 'Too far from opening time.') # don't try more than 1 hour before market start
 
     # buy
-    account.create_buy_order(tradeable, quantity=quantity)
+    try: account.create_buy_order(tradeable, quantity=quantity)
+    except HTTPError as e: return (False, 'HTTPError when creating buy order for {0}: {1} {2}'.format(tradeable.name, e.errno, e.strerror))
     
     def sell_later():
         if config['nuke']: quantity = int(HeldTradeable(tradeable.isin, account).get_amount())
-        account.create_sell_order(tradeable, quantity=quantity, handle_errors=True)
+        try: account.create_sell_order(tradeable, quantity=quantity, handle_errors=True)
+        except HTTPError as e: 
+            if config['verbose']: print('HTTPError when creating sell order for {0} after buying: {1} {2}'.format(tradeable.name, e.errno, e.strerror))
     
     timer = StoppableTimer(time_to_close-config['limit-time'], sell_later)
     scheduled_trades.append(timer)
@@ -125,12 +129,15 @@ def bear(account:Account, tradeable):
 
     # sell
     sell_quantity = quantity if not config['nuke'] else int(HeldTradeable(tradeable.isin, account).get_amount())
-    account.create_sell_order(tradeable, quantity=sell_quantity)
+    try: account.create_sell_order(tradeable, quantity=sell_quantity)
+    except HTTPError as e: return(False, 'HTTPError when creating sell order for {0}: {1} {2}'.format(tradeable.name, e.errno, e.strerror))
     
     def buy_later():
         try: account.create_buy_order(tradeable, quantity=quantity)
         except ValueError:
             if config['verbose']: print('Error buying {0} {1} after selling short'.format(tradeable.name, quantity))
+        except HTTPError as e: 
+            if config['verbose']: print('HTTPError buying {0} after selling short: {1} {2}'.format(tradeable.name, e.errno, e.strerror))
     
     timer = StoppableTimer(time_to_close-config['limit-time'], buy_later)
     scheduled_trades.append(timer)
