@@ -72,7 +72,8 @@ class TextToTradeables:
     @staticmethod
     def deep_search(query:str, search_for='stock'):
         if query == None or len(query) <= 0: return None, None
-        tradeable = Lemon.search_for_tradeable(query, search_type='name', search_for=search_for)
+        try: tradeable = Lemon.search_for_tradeable(query, search_type='name', search_for=search_for)
+        except HTTPError: tradeable = None
         while tradeable == None and ' ' in query and len(query) > 1:
             query = query[query.find(' ')+1:]
             try:
