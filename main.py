@@ -33,6 +33,7 @@ def load_config(path='./config.yml'):
             config['nuke'] = yml['sell-all-mode']
             config['match'] = yml['match-factor']
             config['users'] = [str(usr) for usr in yml['user-ids']]
+            config['denylist'] = [str(usr).lower().strip() for usr in yml['denylist']]
         except KeyError: 
             print('Error in config')
             quit(1)
@@ -68,10 +69,10 @@ def on_tweet_recieved(account:Account, tweet):
             to_print += '\t\t{0} at ${1} (sim: {2}, w_sim: {3})\n'.format(stock[0].name, stock[0].get_cost(), stock[1], stock[1]*len(stock[0].name))
         print(to_print)
     
-    # remove like stocks
+    # remove like stocks and listed stocks
     found_tradeables, unique_stocks = list(), list()
     for stock in stocks: 
-        if stock[0].isin not in found_tradeables:
+        if stock[0].isin not in found_tradeables and str(stock[0].name).lower().strip() not in config['denylist']:
             found_tradeables.append(stock[0].isin)
             unique_stocks.append(stock)
     stocks = unique_stocks

@@ -45,3 +45,8 @@ user-ids:
   # stock news
   - 1089978712685273090 # stock_market_pr
   - 786038665625555000 # stocktiprobot
+
+# the stocks to avoid trading. Commonly misrecognized.
+denylist:
+  - Tradegate
+  -  SBM OFFSHORE
