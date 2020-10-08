@@ -18,12 +18,13 @@ class Twitter:
         self.stream = None
     
     def stream_open(self):
-        return self.stream
+        return self.stream_listener
     
     def open_stream(self, is_async:bool=True, users=['25073877'], restrict=True, verbose=True):
         if not self.stream_open():
             self.stream_listener = CallbackStreamListener(self.callback, swallow_errors=not verbose, filter_users=(users if restrict else list()))
             self.stream = tweepy.Stream(auth=self.api.auth, listener=self.stream_listener)
+            self.stream.on_closed(lambda: self.close_stream())
             self.stream.filter(follow=users, is_async=is_async)
 
     def callback(self, tweet_json):
@@ -33,7 +34,8 @@ class Twitter:
         if self.stream_open():
             self.stream_listener.close()
             self.stream.disconnect()
-            self.stream = None
+            del self.stream
+            del self.stream_listener
     @staticmethod
     def get_tweet_text(tweet_json):
         # https://github.com/tweepy/tweepy/issues/878#issuecomment-424216624

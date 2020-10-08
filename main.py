@@ -164,7 +164,9 @@ if __name__ == '__main__':
     # start the stream and hope for the best!
     try:
         if config['verbose']: print('Opening Stream! Use Control-C to stop!')
-        twtr.open_stream(users=config['users'], is_async=False, restrict=True, verbose=config['verbose'])
+        while True:
+            twtr.open_stream(users=config['users'], is_async=False, restrict=True, verbose=config['verbose'])
+            print('Stream closed, attempting to re-open')
     except (OSError, SystemError, KeyboardInterrupt):
         if config['verbose']: print('Attempting to stop gracefully.')
         twtr.close_stream()
