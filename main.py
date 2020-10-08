@@ -169,6 +169,10 @@ if __name__ == '__main__':
         twtr.close_stream()
     finally:
         print('Stream closed!')
+        # On exit, attempt to cancel all outgoing orders
+        for order in account.get_orders():
+            order.cancel()
+            
         # On exit, attempt to execute all queued orders
         for task in scheduled_trades:
             try: task.execute()
