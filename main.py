@@ -81,8 +81,9 @@ def on_tweet_recieved(account:Account, tweet):
     for stock in stocks:
         if sent > 0: result, code = bull(account, stock[0])
         if sent < 0: result, code = bear(account, stock[0])
-        if not result and config['verbose']:
-            print('Error handling stock {0}: "{1}"'.format(stock[0].name, code)) 
+        
+        if not result: print('Error handling stock {0}: "{1}"'.format(stock[0].name, code))
+        elif config['verbose']: print('{0} on {1}'.format(code,stock[0].name))
 
 # we must keep a list of scheduled trades in case of program stop 
 scheduled_trades = list()
@@ -113,7 +114,7 @@ def bull(account:Account, tradeable):
     
     timer = StoppableTimer(time_to_close-config['limit-time'], sell_later)
     scheduled_trades.append(timer)
-    return (True, 'Executing bullish strategy')
+    return (True, 'Executing bullish strategy with a quantity of {0}'.format(quantity))
 
 def bear(account:Account, tradeable):
     """
@@ -143,7 +144,7 @@ def bear(account:Account, tradeable):
     
     timer = StoppableTimer(time_to_close-config['limit-time'], buy_later)
     scheduled_trades.append(timer)
-    return (True, 'Executing bearish strategy')
+    return (True, 'Executing bearish strategy with a quantity of {0}'.format(quantity))
 
 if __name__ == '__main__':
     config = load_config(KEY_FILE)
