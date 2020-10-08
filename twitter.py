@@ -18,8 +18,8 @@ class Twitter:
         self.stream = None
     
     def stream_open(self):
-        if self.stream_listener: return True
-        else: return False
+        try: return self.stream_listener
+        except AttributeError: return False
     
     def open_stream(self, is_async:bool=True, users=['25073877'], restrict=True, verbose=True):
         if not self.stream_open():
