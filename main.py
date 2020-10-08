@@ -32,6 +32,7 @@ def load_config(path='./config.yml'):
             config['limit-time'] = yml['limit-time']
             config['nuke'] = yml['sell-all-mode']
             config['match'] = yml['match-factor']
+            config['weighted'] = yml['weighted-factor']
             config['users'] = [str(usr) for usr in yml['user-ids']]
             config['denylist'] = [str(usr).lower().strip() for usr in yml['denylist']]
         except KeyError: 
@@ -50,7 +51,7 @@ def on_tweet_recieved(account:Account, tweet):
     # search body with nlp
     stocks = TextToTradeables.process_text(txt, similarity_cutoff=config['match'], min_noun_length=4)
     # re-prune the stock list
-    if config['match']: stocks = list(filter(lambda stock: stock[1] <= config['match'], stocks))
+    stocks = list(filter(lambda stock: stock[1]*len(stock[0].name) <= config['weighted-factor'], stocks))
 
     # search twitter cashtags ($STOCK)
     cashtags = [(Lemon.search_for_tradeable(Twitter.cashtag_to_stock(q)), 0) for q in Twitter.get_tweet_cashtags(tweet)]

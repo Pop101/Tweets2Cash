@@ -10,11 +10,11 @@ lemon-account-name: Demo
 #---Config---#
 verbose: true
 
-# how closely company names and tweet text need to match. Anything below 1.4 is fine.
+# How closely company names and tweet text need to match. Anything below 1.4 is fine.
 match-factor: 0.8
 
-# If set to true, the match factor will depend on the length of the stock's name. A value of 4-6 is fine for this
-match-weigthed: false
+# Similarity dependant on a stock's name. A value of 4-6 is fine for this
+weighted-factor: 4.5
 
 # the maximum amount of Euros to spend on a single transaction
 transaction-limit: 50
@@ -46,7 +46,8 @@ user-ids:
   - 1089978712685273090 # stock_market_pr
   - 786038665625555000 # stocktiprobot
 
-# the stocks to avoid trading. Commonly misrecognized.
+# the stocks to avoid trading. Removes insider trading and commonly misrecognized companies.
 denylist:
   - Tradegate
-  -  SBM OFFSHORE
+  - SBM OFFSHORE
+  - NOK AIRLINES
