@@ -172,7 +172,7 @@ if __name__ == '__main__':
         print('Stream closed!')
         # On exit, attempt to cancel all outgoing orders
         for order in account.get_orders():
-            order.cancel()
+            order.delete()
             
         # On exit, attempt to execute all queued orders
         for task in scheduled_trades:
