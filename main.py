@@ -95,7 +95,7 @@ def bull(account:Account, tradeable):
     """
     try: quantity = int(config['limit']/tradeable.get_cost())
     except ZeroDivisionError: quantity = 1
-    if quantity <= 0: return (False, 'Not enough money') # can't trade fractions kid
+    if quantity <= 0: return (False, 'Price higher than set limit') # can't trade fractions kid
 
     time_to_close = (Lemon.next_market_closing()-datetime.now().astimezone()).total_seconds()
     if time_to_close < config['limit-time']: return (False, 'Too close to closing time!'  if time_to_close > 0 else 'Market Closed') # don't go for profit 1 hr before close
@@ -123,7 +123,7 @@ def bear(account:Account, tradeable):
     """
     try: quantity = int(config['limit']/tradeable.get_cost())
     except ZeroDivisionError: quantity = 1
-    if quantity <= 0: return (False, 'Can\'t sell as you don\'t hold any') # can't trade fractions kid
+    if quantity <= 0: return (False, 'Price higher than set limit') # can't trade fractions kid
 
     time_to_close = (Lemon.next_market_closing()-datetime.now().astimezone()).total_seconds()
     if time_to_close < config['limit-time']: return (False, 'Too close to closing time!' if time_to_close > 0 else 'Market Closed') # don't go for profit 1 hr before close
