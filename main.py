@@ -132,7 +132,8 @@ def bear(account:Account, tradeable):
     if time_to_open > config['limit-time']: return (False, 'Too far from opening time.') # don't try more than 1 hour before market start
 
     # sell
-    sell_quantity = quantity if not config['nuke'] else int(HeldTradeable(tradeable.isin, account).get_amount())
+    held_quantity = HeldTradeable(tradeable.isin, account).get_amount()
+    sell_quantity = min(quantity, held_quantity) if not config['nuke'] else held_quantity
     try: account.create_sell_order(tradeable, quantity=sell_quantity)
     except HTTPError as e: return(False, 'HTTPError when creating sell order for {0}: {1} {2}'.format(tradeable.name, e.errno, e.strerror))
     
