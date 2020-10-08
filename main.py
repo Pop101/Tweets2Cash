@@ -51,7 +51,7 @@ def on_tweet_recieved(account:Account, tweet):
     # search body with nlp
     stocks = TextToTradeables.process_text(txt, similarity_cutoff=config['match'], min_noun_length=4)
     # re-prune the stock list
-    stocks = list(filter(lambda stock: stock[1]*len(stock[0].name) <= config['weighted-factor'], stocks))
+    stocks = list(filter(lambda stock: stock[1]*len(stock[0].name) <= config['weighted'], stocks))
 
     # search twitter cashtags ($STOCK)
     cashtags = [(Lemon.search_for_tradeable(Twitter.cashtag_to_stock(q)), 0) for q in Twitter.get_tweet_cashtags(tweet)]
