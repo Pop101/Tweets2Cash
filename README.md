@@ -1,4 +1,4 @@
-# Tweet2Cash
+# Tweets2Cash
  Buy and sell stocks on the Lang & Schwarz exchange based on tweets using [lemon.markets](http://lemon.markets)
 
 ## Table of contents
@@ -72,4 +72,14 @@ user-ids:
   # stock news
   - 1089978712685273090 # stock_market_pr
   - 786038665625555000 # stocktiprobot
+  
+# the stocks to avoid trading. Removes insider trading and commonly misrecognized companies.
+denylist:
+  - Tradegate
+  - SBM OFFSHORE
+  - NOK AIRLINES
+  - UNI-PRESIDENT
+  - KONE
+  - WORKDAY
+  - SAMPO
 ```
